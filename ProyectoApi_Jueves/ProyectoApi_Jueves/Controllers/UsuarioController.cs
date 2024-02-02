@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
-using Dapper;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoApi_Jueves.Entidades;
+using Microsoft.AspNetCore.Authorization;
+using ProyectoApi_Jueves.Services;
 
 namespace ProyectoApi_Jueves.Controllers
 {
@@ -10,13 +9,33 @@ namespace ProyectoApi_Jueves.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
+        private readonly IUsuarios _usuarios;
+
+        public UsuarioController(IUsuarios usuarios)
+        {
+            _usuarios = usuarios;
+        }
+
+        [AllowAnonymous]
+        [Route("IniciarSesion")]
+        [HttpPost]
+        public IActionResult IniciarSesion(Usuario entidad)
+        {
+            if (entidad.Cedula == "304590415" && entidad.Contrasenna == "secreta")
+            {
+                var token = _usuarios.GenerarToken(entidad.Cedula);
+                return Ok(token);
+            }
+            
+            return NotFound("Su usuario no es válido");
+        }
+
+        [AllowAnonymous]
+        [Route("ConsultarUsuario")]
         [HttpGet]
         public IActionResult ConsultarUsuario()
         {
-            using (var context = new SqlConnection("Server=localhost\\MSSQLSERVER01; Database=BD_JUEVES; Trusted_Connection=True;"))
-            {
-                return Ok(context.Execute("", new { }, commandType: System.Data.CommandType.StoredProcedure));
-            }
+            return Ok();
         }
 
     }
