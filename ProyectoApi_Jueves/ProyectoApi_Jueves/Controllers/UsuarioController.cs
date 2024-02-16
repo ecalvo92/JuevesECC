@@ -2,6 +2,15 @@
 using ProyectoApi_Jueves.Entidades;
 using Microsoft.AspNetCore.Authorization;
 using ProyectoApi_Jueves.Services;
+using ProyectoApi_Jueves.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Data.SqlClient;
+using Dapper;
+using System.Data;
 
 namespace ProyectoApi_Jueves.Controllers
 {
@@ -9,11 +18,12 @@ namespace ProyectoApi_Jueves.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        private readonly IUsuarios _usuarios;
-
-        public UsuarioController(IUsuarios usuarios)
+        private readonly IUtilitariosModel _utilitariosModel;
+        private readonly IConfiguration _configuration;
+        public UsuarioController(IUtilitariosModel utilitariosModel, IConfiguration configuration) 
         {
-            _usuarios = usuarios;
+            _utilitariosModel = utilitariosModel;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -21,21 +31,20 @@ namespace ProyectoApi_Jueves.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(Usuario entidad)
         {
-            if (entidad.Cedula == "304590415" && entidad.Contrasenna == "secreta")
-            {
-                var token = _usuarios.GenerarToken(entidad.Cedula);
-                return Ok(token);
-            }
-            
-            return NotFound("Su usuario no es válido");
+            return Ok();
         }
 
         [AllowAnonymous]
-        [Route("ConsultarUsuario")]
-        [HttpGet]
-        public IActionResult ConsultarUsuario()
+        [Route("RegistrarUsuario")]
+        [HttpPost]
+        public IActionResult RegistrarUsuario(Usuario entidad)
         {
-            return Ok();
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                return Ok(db.Execute("RegistrarUsuario", 
+                    new { entidad.Correo, entidad.Contrasenna, entidad.Nombre }, 
+                    commandType : CommandType.StoredProcedure));
+            }
         }
 
     }

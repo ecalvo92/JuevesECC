@@ -1,8 +1,7 @@
 ﻿namespace ProyectoApi_Jueves.Services
 {
-    public interface IUsuarios
+    public interface IUtilitariosModel
     {
         public string GenerarToken(string Cedula);
-
     }
 }

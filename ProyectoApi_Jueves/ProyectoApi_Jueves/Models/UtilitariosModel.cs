@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using ProyectoApi_Jueves.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,11 +7,10 @@ using System.Text;
 
 namespace ProyectoApi_Jueves.Models
 {
-    public class Usuarios : IUsuarios
+    public class UtilitariosModel : IUtilitariosModel
     {
         private readonly IConfiguration _configuration;
-
-        public Usuarios(IConfiguration configuration)
+        public UtilitariosModel(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -26,7 +26,7 @@ namespace ProyectoApi_Jueves.Models
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15),
+                expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: cred);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
