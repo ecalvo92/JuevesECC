@@ -2,6 +2,10 @@
 {
     public interface IUtilitariosModel
     {
-        public string GenerarToken(string Cedula);
+        public string? GenerarToken(string Correo);
+
+        public string Encrypt(string texto);
+
+        public string Decrypt(string texto);
     }
 }

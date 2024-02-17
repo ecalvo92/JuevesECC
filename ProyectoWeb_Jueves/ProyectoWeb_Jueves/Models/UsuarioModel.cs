@@ -3,26 +3,30 @@ using ProyectoWeb_Jueves.Services;
 
 namespace ProyectoWeb_Jueves.Models
 {
-    public class UsuarioModel : IUsuarioModel
+    public class UsuarioModel(HttpClient _http, IConfiguration _configuration) : IUsuarioModel
     {
-        private readonly HttpClient _http;
-        private readonly IConfiguration _configuration;
-        public UsuarioModel(HttpClient http, IConfiguration configuration)
-        {
-            _http = http;
-            _configuration = configuration;
-        }
-
-        public int RegistrarUsuario(Usuario entidad)
+        public Respuesta? RegistrarUsuario(Usuario entidad)
         {
             string url = _configuration.GetSection("settings:UrlApi").Value + "api/Usuario/RegistrarUsuario";
             JsonContent body = JsonContent.Create(entidad);
             var resp = _http.PostAsync(url, body).Result;
 
             if (resp.IsSuccessStatusCode)
-                return resp.Content.ReadFromJsonAsync<int>().Result;
+                return resp.Content.ReadFromJsonAsync<Respuesta>().Result;
 
-            return 0;
+            return null;
+        }
+
+        public UsuarioRespuesta? IniciarSesion(Usuario entidad)
+        {
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Usuario/IniciarSesion";
+            JsonContent body = JsonContent.Create(entidad);
+            var resp = _http.PostAsync(url, body).Result;
+
+            if (resp.IsSuccessStatusCode)
+                return resp.Content.ReadFromJsonAsync<UsuarioRespuesta>().Result;
+
+            return null;
         }
 
     }

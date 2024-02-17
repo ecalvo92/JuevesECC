@@ -2,12 +2,6 @@
 using ProyectoApi_Jueves.Entidades;
 using Microsoft.AspNetCore.Authorization;
 using ProyectoApi_Jueves.Services;
-using ProyectoApi_Jueves.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Data.SqlClient;
 using Dapper;
 using System.Data;
@@ -16,22 +10,34 @@ namespace ProyectoApi_Jueves.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController(IUtilitariosModel _utilitariosModel, IConfiguration _configuration) : ControllerBase
     {
-        private readonly IUtilitariosModel _utilitariosModel;
-        private readonly IConfiguration _configuration;
-        public UsuarioController(IUtilitariosModel utilitariosModel, IConfiguration configuration) 
-        {
-            _utilitariosModel = utilitariosModel;
-            _configuration = configuration;
-        }
-
         [AllowAnonymous]
         [Route("IniciarSesion")]
         [HttpPost]
         public IActionResult IniciarSesion(Usuario entidad)
         {
-            return Ok();
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                UsuarioRespuesta respuesta = new UsuarioRespuesta();
+
+                var result = db.Query<Usuario>("IniciarSesion",
+                    new { entidad.Correo, entidad.Contrasenna },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Sus datos no son correctos.";
+                }
+                else
+                {
+                    respuesta.Dato = result;
+                    respuesta.Dato.Token = _utilitariosModel.GenerarToken(result.Correo ?? string.Empty);
+                }
+
+                return Ok(respuesta);
+            }
         }
 
         [AllowAnonymous]
@@ -41,9 +47,19 @@ namespace ProyectoApi_Jueves.Controllers
         {
             using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                return Ok(db.Execute("RegistrarUsuario", 
-                    new { entidad.Correo, entidad.Contrasenna, entidad.Nombre }, 
-                    commandType : CommandType.StoredProcedure));
+                Respuesta respuesta = new Respuesta();
+
+                var result = db.Execute("RegistrarUsuario", 
+                    new { entidad.Correo, entidad.Contrasenna, entidad.NombreUsuario }, 
+                    commandType : CommandType.StoredProcedure);
+
+                if (result <= 0)
+                { 
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Su correo ya se encuentra registrado.";
+                }
+
+                return Ok(respuesta);
             }
         }
 

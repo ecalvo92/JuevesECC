@@ -11,9 +11,9 @@
                 <p class="login-box-msg">Registro de usuarios</p>
 
                 @using (Html.BeginForm("RegistrarUsuario", "Home", FormMethod.Post))
-                { 
+                {                 
                     <div class="input-group mb-3">
-                        @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", @placeholder = "Correo Electrónico", @type="Email" })
+                        @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", @placeholder = "Correo Electrónico", @type="Email", @required="true" })
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-user"></span>
@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @placeholder = "Nombre" })
+                        @Html.TextBoxFor(m => m.NombreUsuario, new { @class = "form-control", @placeholder = "Nombre", @required = "true" })
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -29,13 +29,20 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        @Html.TextBoxFor(m => m.Contrasenna, new { @class = "form-control", @placeholder = "Contraseña", @type = "Password" })
+                        @Html.TextBoxFor(m => m.Contrasenna, new { @class = "form-control", @placeholder = "Contraseña", @type = "Password", @required = "true" })
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
                         </div>
                     </div>
+
+                    @if (ViewBag.MsjPantalla != null)
+                    { 
+                        <div class="alert alert-warning" role="alert" style="text-align:center">
+                            @ViewBag.MsjPantalla
+                        </div>
+                    }
                     
                     <div class="row">
                         <div class="col-12">

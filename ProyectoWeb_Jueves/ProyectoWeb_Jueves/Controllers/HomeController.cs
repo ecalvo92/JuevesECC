@@ -2,19 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using ProyectoWeb_Jueves.Entidades;
 using ProyectoWeb_Jueves.Models;
 using ProyectoWeb_Jueves.Services;
-using System.Diagnostics;
 
 namespace ProyectoWeb_Jueves.Controllers
 {
     [ResponseCache(NoStore = true, Duration = 0)]
-    public class HomeController : Controller
+    public class HomeController(IUsuarioModel _usuarioModel) : Controller
     {
-        private readonly IUsuarioModel _usuarioModel;
-        public HomeController(IUsuarioModel usuarioModel)
-        {
-            _usuarioModel = usuarioModel;
-        }
-
 
         [HttpGet]
         public IActionResult IniciarSesion()
@@ -23,10 +16,28 @@ namespace ProyectoWeb_Jueves.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult IniciarSesion(Usuario entidad)
+        {
+            var resp = _usuarioModel.IniciarSesion(entidad);
+
+            if (resp?.Codigo == "00")
+            {
+                HttpContext.Session.SetString("Login", "true");
+                return RedirectToAction("PantallaPrincipal", "Home");
+            }
+            else
+            {
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
+        }
+
 
         [HttpGet]
         public IActionResult RegistrarUsuario()
         {
+            HttpContext.Session.Clear();
             return View();
         }
 
@@ -35,10 +46,13 @@ namespace ProyectoWeb_Jueves.Controllers
         {
             var resp = _usuarioModel.RegistrarUsuario(entidad);
 
-            if (resp > 0)
+            if (resp?.Codigo == "00")
                 return RedirectToAction("IniciarSesion", "Home");
-
-            return View();
+            else
+            {
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
         }
 
 
