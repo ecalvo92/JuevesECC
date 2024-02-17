@@ -1,32 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using ProyectoApi_Jueves.Services;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using ProyectoWeb_Jueves.Services;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ProyectoApi_Jueves.Models
+namespace ProyectoWeb_Jueves.Models
 {
     public class UtilitariosModel(IConfiguration _configuration) : IUtilitariosModel
     {
         string SecretKey = _configuration.GetSection("settings:SecretKey").Value ?? string.Empty;
-
-        public string? GenerarToken(string Correo)
-        {
-            List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim("username", Encrypt(Correo)));      
-            
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
-                signingCredentials: cred);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
 
         public string Encrypt(string texto)
         {

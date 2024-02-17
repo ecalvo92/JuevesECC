@@ -6,7 +6,7 @@ using ProyectoWeb_Jueves.Services;
 namespace ProyectoWeb_Jueves.Controllers
 {
     [ResponseCache(NoStore = true, Duration = 0)]
-    public class HomeController(IUsuarioModel _usuarioModel) : Controller
+    public class HomeController(IUsuarioModel _usuarioModel, IUtilitariosModel _utilitariosModel) : Controller
     {
 
         [HttpGet]
@@ -19,6 +19,7 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(Usuario entidad)
         {
+            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna);
             var resp = _usuarioModel.IniciarSesion(entidad);
 
             if (resp?.Codigo == "00")
@@ -44,6 +45,7 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpPost]
         public IActionResult RegistrarUsuario(Usuario entidad)
         {
+            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna);
             var resp = _usuarioModel.RegistrarUsuario(entidad);
 
             if (resp?.Codigo == "00")

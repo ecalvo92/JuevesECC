@@ -48,6 +48,8 @@ INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol]
 GO
 INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado]) VALUES (3, N'lsolano00806@ufide.ac.cr', N'00806', N'Emerson Solano Artavia', 1, 1)
 GO
+INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado]) VALUES (4, N'gmora60255@ufide.ac.cr', N'tLz2VZt2A63J5quw3Va28g==', N'Gerardo Mora Castillo', 1, 1)
+GO
 SET IDENTITY_INSERT [dbo].[tUsuario] OFF
 GO
 
@@ -63,10 +65,26 @@ GO
 ALTER TABLE [dbo].[tUsuario] CHECK CONSTRAINT [FK_tUsuario_tRol]
 GO
 
+CREATE PROCEDURE [dbo].[IniciarSesion]
+	@Correo			varchar(200),
+	@Contrasenna	varchar(200)
+AS
+BEGIN
+	
+	SELECT	IdUsuario,Correo,U.Nombre 'NombreUsuario',U.IdRol,R.Nombre 'NombreRol',Estado
+	FROM	tUsuario U
+	INNER	JOIN tRol R ON U.IdRol = R.IdRol
+	WHERE	Correo = @Correo
+		AND Contrasenna = @Contrasenna
+		AND Estado = 1
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[RegistrarUsuario]
 	@Correo			varchar(200),
 	@Contrasenna	varchar(200),
-	@Nombre			varchar(200)
+	@NombreUsuario	varchar(200)
 AS
 BEGIN
 
@@ -77,8 +95,9 @@ BEGIN
 				@IdRol  SMALLINT = 1
 
 		INSERT INTO dbo.tUsuario(Correo,Contrasenna,Nombre,IdRol,Estado)
-	    VALUES(@Correo,@Contrasenna,@Nombre,@IdRol,@Estado)
+	    VALUES(@Correo,@Contrasenna,@NombreUsuario,@IdRol,@Estado)
 
 	END
 
 END
+GO
