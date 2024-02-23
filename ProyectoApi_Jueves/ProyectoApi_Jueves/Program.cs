@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using ProyectoApi_Jueves.Services;
 using ProyectoApi_Jueves.Models;
+using ProyectoApi_Jueves.Services;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;

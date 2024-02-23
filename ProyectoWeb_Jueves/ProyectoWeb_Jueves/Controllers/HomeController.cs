@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ProyectoWeb_Jueves.Entidades;
 using ProyectoWeb_Jueves.Models;
 using ProyectoWeb_Jueves.Services;
@@ -19,7 +20,7 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpPost]
         public IActionResult IniciarSesion(Usuario entidad)
         {
-            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna);
+            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna!);
             var resp = _usuarioModel.IniciarSesion(entidad);
 
             if (resp?.Codigo == "00")
@@ -45,7 +46,7 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpPost]
         public IActionResult RegistrarUsuario(Usuario entidad)
         {
-            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna);
+            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna!);
             var resp = _usuarioModel.RegistrarUsuario(entidad);
 
             if (resp?.Codigo == "00")
@@ -58,13 +59,25 @@ namespace ProyectoWeb_Jueves.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult RecuperarAcceso()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult RecuperarAcceso(Usuario entidad)
+        {
+            return view();
+        }
+
+
         [Seguridad]
         [HttpGet]
         public IActionResult PantallaPrincipal()
         {
             return View();
         }
-
 
     }
 }

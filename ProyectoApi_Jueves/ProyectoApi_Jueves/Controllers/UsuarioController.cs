@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProyectoApi_Jueves.Entidades;
+﻿using Dapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProyectoApi_Jueves.Entidades;
 using ProyectoApi_Jueves.Services;
-using System.Data.SqlClient;
-using Dapper;
 using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProyectoApi_Jueves.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuarioController(IUtilitariosModel _utilitariosModel, IConfiguration _configuration) : ControllerBase
+    public class UsuarioController(IUtilitariosModel _utilitariosModel, IConfiguration _configuration,
+                                   IHostEnvironment _hostEnvironment) : ControllerBase
     {
         [AllowAnonymous]
         [Route("IniciarSesion")]
@@ -49,14 +52,50 @@ namespace ProyectoApi_Jueves.Controllers
             {
                 Respuesta respuesta = new Respuesta();
 
-                var result = db.Execute("RegistrarUsuario", 
-                    new { entidad.Correo, entidad.Contrasenna, entidad.NombreUsuario }, 
-                    commandType : CommandType.StoredProcedure);
+                var result = db.Execute("RegistrarUsuario",
+                    new { entidad.Correo, entidad.Contrasenna, entidad.NombreUsuario },
+                    commandType: CommandType.StoredProcedure);
 
                 if (result <= 0)
-                { 
+                {
                     respuesta.Codigo = "-1";
                     respuesta.Mensaje = "Su correo ya se encuentra registrado.";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [AllowAnonymous]
+        [Route("RecuperarAcceso")]
+        [HttpPost]
+        public IActionResult RecuperarAcceso(Usuario entidad)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                UsuarioRespuesta respuesta = new UsuarioRespuesta();
+
+                string NuevaContrasenna = _utilitariosModel.GenerarCodigo();
+                string Contrasenna = _utilitariosModel.Encrypt(NuevaContrasenna);
+
+                var result = db.Query<Usuario>("RecuperarAcceso",
+                    new { entidad.Correo, Contrasenna },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Sus datos no son correctos.";
+                }
+                else
+                {
+                    string ruta = Path.Combine(_hostEnvironment.ContentRootPath, "FormatoCorreo.html");
+                    string htmlBody = System.IO.File.ReadAllText(ruta);
+                    htmlBody = htmlBody.Replace("@Nombre@", result.NombreUsuario);
+                    htmlBody = htmlBody.Replace("@Contrasenna@", NuevaContrasenna);
+
+                    _utilitariosModel.EnviarCorreo(result.Correo!, "Nuevo Acceso!", htmlBody);
+                    respuesta.Dato = result;
                 }
 
                 return Ok(respuesta);
