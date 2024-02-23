@@ -25,8 +25,13 @@ namespace ProyectoWeb_Jueves.Controllers
 
             if (resp?.Codigo == "00")
             {
-                HttpContext.Session.SetString("Login", "true");
-                return RedirectToAction("PantallaPrincipal", "Home");
+                if ((bool)(resp?.Dato?.EsTemporal!))
+                    return RedirectToAction("CambiarContrasenna", "Home");
+                else
+                {
+                    HttpContext.Session.SetString("Login", "true");
+                    return RedirectToAction("PantallaPrincipal", "Home");
+                }
             }
             else
             {
@@ -62,13 +67,35 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpGet]
         public IActionResult RecuperarAcceso()
         {
+            HttpContext.Session.Clear();
             return View();
         }
 
         [HttpPost]
         public IActionResult RecuperarAcceso(Usuario entidad)
         {
-            return view();
+            var resp = _usuarioModel.RecuperarAcceso(entidad);
+
+            if (resp?.Codigo == "00")
+                return RedirectToAction("IniciarSesion", "Home");
+            else
+            {
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult CambiarContrasenna()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CambiarContrasenna(Usuario entidad)
+        {
+            return View();
         }
 
 

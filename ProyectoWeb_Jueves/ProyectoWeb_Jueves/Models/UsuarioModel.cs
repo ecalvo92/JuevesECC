@@ -29,5 +29,17 @@ namespace ProyectoWeb_Jueves.Models
             return null;
         }
 
+        public UsuarioRespuesta? RecuperarAcceso(Usuario entidad)
+        {
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Usuario/RecuperarAcceso";
+            JsonContent body = JsonContent.Create(entidad);
+            var resp = _http.PostAsync(url, body).Result;
+
+            if (resp.IsSuccessStatusCode)
+                return resp.Content.ReadFromJsonAsync<UsuarioRespuesta>().Result;
+
+            return null;
+        }
+
     }
 }

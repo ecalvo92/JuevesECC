@@ -5,8 +5,6 @@ using ProyectoApi_Jueves.Entidades;
 using ProyectoApi_Jueves.Services;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ProyectoApi_Jueves.Controllers
 {
@@ -77,9 +75,10 @@ namespace ProyectoApi_Jueves.Controllers
 
                 string NuevaContrasenna = _utilitariosModel.GenerarCodigo();
                 string Contrasenna = _utilitariosModel.Encrypt(NuevaContrasenna);
+                bool EsTemporal = true;
 
                 var result = db.Query<Usuario>("RecuperarAcceso",
-                    new { entidad.Correo, Contrasenna },
+                    new { entidad.Correo, Contrasenna, EsTemporal },
                     commandType: CommandType.StoredProcedure).FirstOrDefault();
 
                 if (result == null)
@@ -95,6 +94,36 @@ namespace ProyectoApi_Jueves.Controllers
                     htmlBody = htmlBody.Replace("@Contrasenna@", NuevaContrasenna);
 
                     _utilitariosModel.EnviarCorreo(result.Correo!, "Nuevo Acceso!", htmlBody);
+                    respuesta.Dato = result;
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [AllowAnonymous]
+        [Route("CambiarContrasenna")]
+        [HttpPost]
+        public IActionResult CambiarContrasenna(Usuario entidad)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                UsuarioRespuesta respuesta = new UsuarioRespuesta();
+
+                string Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna!);
+                bool EsTemporal = false;
+
+                var result = db.Query<Usuario>("RecuperarAcceso",
+                    new { entidad.Correo, Contrasenna, EsTemporal },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Sus datos no son correctos.";
+                }
+                else
+                {
                     respuesta.Dato = result;
                 }
 

@@ -9,6 +9,7 @@
         public short IdRol { get; set; }
         public string? NombreRol { get; set; }
         public bool Estado { get; set; }
+        public bool? EsTemporal { get; set; }
     }
 
     public class UsuarioRespuesta
