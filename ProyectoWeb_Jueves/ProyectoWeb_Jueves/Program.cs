@@ -6,9 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 //ADD INTERFACES
 builder.Services.AddSingleton<IUsuarioModel, UsuarioModel>();
+builder.Services.AddSingleton<IProductoModel, ProductoModel>();
 builder.Services.AddSingleton<IUtilitariosModel, UtilitariosModel>();
 
 var app = builder.Build();

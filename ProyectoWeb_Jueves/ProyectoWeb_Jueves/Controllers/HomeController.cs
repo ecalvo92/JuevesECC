@@ -26,6 +26,7 @@ namespace ProyectoWeb_Jueves.Controllers
             {
                 HttpContext.Session.SetString("Correo", resp?.Dato?.Correo!);
                 HttpContext.Session.SetString("Nombre", resp?.Dato?.NombreUsuario!);
+                HttpContext.Session.SetString("Token", resp?.Dato?.Token!);
 
                 if ((bool)(resp?.Dato?.EsTemporal!))
                 {

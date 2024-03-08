@@ -11,6 +11,7 @@ namespace ProyectoWeb_Jueves.Entidades
         public short IdRol { get; set; }
         public string? NombreRol { get; set; }
         public bool Estado { get; set; }
+        public string? Token { get; set; }
         public bool? EsTemporal { get; set; }
         public string? ContrasennaTemporal { get; set; }
     }
