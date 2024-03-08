@@ -4,10 +4,12 @@ namespace ProyectoWeb_Jueves.Services
 {
     public interface IUsuarioModel
     {
-        public Respuesta? RegistrarUsuario(Usuario entidad);
+        Respuesta? RegistrarUsuario(Usuario entidad);
 
-        public UsuarioRespuesta? IniciarSesion(Usuario entidad);
+        UsuarioRespuesta? IniciarSesion(Usuario entidad);
 
-        public UsuarioRespuesta? RecuperarAcceso(Usuario entidad);
+        UsuarioRespuesta? RecuperarAcceso(Usuario entidad);
+
+        UsuarioRespuesta? CambiarContrasenna(Usuario entidad);
     }
 }

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ProyectoWeb_Jueves.Entidades;
 using ProyectoWeb_Jueves.Models;
 using ProyectoWeb_Jueves.Services;
@@ -25,8 +24,13 @@ namespace ProyectoWeb_Jueves.Controllers
 
             if (resp?.Codigo == "00")
             {
+                HttpContext.Session.SetString("Correo", resp?.Dato?.Correo!);
+                HttpContext.Session.SetString("Nombre", resp?.Dato?.NombreUsuario!);
+
                 if ((bool)(resp?.Dato?.EsTemporal!))
+                {
                     return RedirectToAction("CambiarContrasenna", "Home");
+                }
                 else
                 {
                     HttpContext.Session.SetString("Login", "true");
@@ -89,13 +93,34 @@ namespace ProyectoWeb_Jueves.Controllers
         [HttpGet]
         public IActionResult CambiarContrasenna()
         {
-            return View();
+            var entidad = new Usuario();
+            entidad.Correo = HttpContext.Session.GetString("Correo");
+            return View(entidad);
         }
 
         [HttpPost]
         public IActionResult CambiarContrasenna(Usuario entidad)
         {
-            return View();
+            if (entidad.Contrasenna?.Trim() == entidad.ContrasennaTemporal?.Trim())
+            {
+                ViewBag.MsjPantalla = "Debe utilizar una contraseña distinta";
+                return View();
+            }
+
+            entidad.Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna!);
+            entidad.ContrasennaTemporal = _utilitariosModel.Encrypt(entidad.ContrasennaTemporal!);
+            var resp = _usuarioModel.CambiarContrasenna(entidad);
+
+            if (resp?.Codigo == "00")
+            {
+                HttpContext.Session.SetString("Login", "true");
+                return RedirectToAction("PantallaPrincipal", "Home");
+            }
+            else
+            {
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
         }
 
 
@@ -104,6 +129,15 @@ namespace ProyectoWeb_Jueves.Controllers
         public IActionResult PantallaPrincipal()
         {
             return View();
+        }
+
+
+        [Seguridad]
+        [HttpGet]
+        public IActionResult Salir()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("IniciarSesion","Home");
         }
 
     }

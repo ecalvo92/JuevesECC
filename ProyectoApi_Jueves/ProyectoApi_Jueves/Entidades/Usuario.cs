@@ -11,6 +11,7 @@
         public bool Estado { get; set; }
         public string? Token { get; set; }
         public bool? EsTemporal { get; set; }
+        public string? ContrasennaTemporal { get; set; }
     }
 
     public class UsuarioRespuesta

@@ -1,4 +1,6 @@
-﻿namespace ProyectoWeb_Jueves.Entidades
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProyectoWeb_Jueves.Entidades
 {
     public class Usuario
     {
@@ -10,6 +12,7 @@
         public string? NombreRol { get; set; }
         public bool Estado { get; set; }
         public bool? EsTemporal { get; set; }
+        public string? ContrasennaTemporal { get; set; }
     }
 
     public class UsuarioRespuesta

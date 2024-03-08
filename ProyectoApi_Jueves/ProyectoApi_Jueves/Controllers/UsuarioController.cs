@@ -103,18 +103,16 @@ namespace ProyectoApi_Jueves.Controllers
 
         [AllowAnonymous]
         [Route("CambiarContrasenna")]
-        [HttpPost]
+        [HttpPut]
         public IActionResult CambiarContrasenna(Usuario entidad)
         {
             using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 UsuarioRespuesta respuesta = new UsuarioRespuesta();
-
-                string Contrasenna = _utilitariosModel.Encrypt(entidad.Contrasenna!);
                 bool EsTemporal = false;
 
-                var result = db.Query<Usuario>("RecuperarAcceso",
-                    new { entidad.Correo, Contrasenna, EsTemporal },
+                var result = db.Query<Usuario>("CambiarContrasenna",
+                    new { entidad.Correo, entidad.Contrasenna, entidad.ContrasennaTemporal, EsTemporal },
                     commandType: CommandType.StoredProcedure).FirstOrDefault();
 
                 if (result == null)
