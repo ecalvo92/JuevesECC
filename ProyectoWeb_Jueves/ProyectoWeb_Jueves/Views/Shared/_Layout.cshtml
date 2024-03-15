@@ -30,7 +30,7 @@
                         <span class="">@Context.Session.GetString("Nombre")!.ToString()</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header"> Información </span>
+                        <span class="dropdown-item dropdown-header"> Rol: @Context.Session.GetString("NombreRol")!.ToString() </span>
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item">
                             <i class="fas fa-envelope mr-2"></i> Perfil
@@ -61,36 +61,39 @@
 
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                                                
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-table"></i>
-                                <p>
-                                    Mantenimientos
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ConsultarProductos","Producto")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Productos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../tables/data.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>DataTables</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../tables/jsgrid.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>jsGrid</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                                
+                        @if (Context.Session.GetString("IdRol") == "2")
+                        {
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-table"></i>
+                                    <p>
+                                        Mantenimientos
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("ConsultarProductos","Producto")" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Productos</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="../tables/data.html" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>DataTables</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="../tables/jsgrid.html" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>jsGrid</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }                       
                        
                     </ul>
                 </nav>
@@ -108,11 +111,7 @@
         </div>
 
         <footer class="main-footer">
-            <div class="float-right d-none d-sm-block">
-                <b>Version</b> 3.0.4
-            </div>
-            <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-            reserved.
+            <strong>Sistema Web Jueves Noche</strong>
         </footer>
 
     </div>

@@ -1,0 +1,41 @@
+﻿@model List<ProyectoWeb_Jueves.Entidades.Producto>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="card-title">Productos</h3>
+                <div style="text-align:right">
+                    <a class="btn btn-primary" href="@Url.Action("AgregarProducto", "Producto")"> + Agregar</a>
+                </div>
+            </div>           
+
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Inventario</th>
+                            <th>Categoría</th>
+                            <th>Cantidad Mínima</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.IdProducto</td>
+                                <td>@item.NombreProducto</td>
+                                <td>@item.Inventario</td>
+                                <td>@item.NombreCategoria</td>
+                                <td>@item.CantidadMinima</td>
+                            </tr>
+                        }                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

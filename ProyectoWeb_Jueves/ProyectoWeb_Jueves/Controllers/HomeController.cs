@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoWeb_Jueves.Entidades;
 using ProyectoWeb_Jueves.Models;
@@ -27,6 +28,8 @@ namespace ProyectoWeb_Jueves.Controllers
                 HttpContext.Session.SetString("Correo", resp?.Dato?.Correo!);
                 HttpContext.Session.SetString("Nombre", resp?.Dato?.NombreUsuario!);
                 HttpContext.Session.SetString("Token", resp?.Dato?.Token!);
+                HttpContext.Session.SetString("IdRol", resp?.Dato?.IdRol.ToString()!);
+                HttpContext.Session.SetString("NombreRol", resp?.Dato?.NombreRol!);
 
                 if ((bool)(resp?.Dato?.EsTemporal!))
                 {

@@ -1,0 +1,62 @@
+﻿@model ProyectoWeb_Jueves.Entidades.Producto
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+
+        <div class="card card-secondary" style="margin-top:2%">
+            <div class="card-header">
+                <h3 class="card-title">Registro de Productos</h3>
+            </div>
+
+            @using (Html.BeginForm("AgregarProducto", "Producto", FormMethod.Post))
+            {
+                <div class="card-body">
+                    @Html.Label("Nombre")
+                    @Html.TextBoxFor(x => x.NombreProducto, new 
+                        { 
+                            @class = "form-control", 
+                            @placeholder = "Nombre", 
+                            @required = "true" })
+                    <br>
+
+                    @Html.Label("Inventario")
+                    @Html.TextBoxFor(x => x.Inventario, new
+                        {
+                            @class = "form-control",
+                            @placeholder = "Inventario",
+                            @onkeypress = "return event.charCode >= 48 && event.charCode <= 57",
+                            @onpaste = "return false",
+                            @pattern = "^[0-9]+$",
+                            @required = "true"
+                        })
+                    <br>
+
+                    @Html.Label("Categoría")
+                    @Html.DropDownListFor(x => x.IdCategoria, ViewBag.Categorias as List<SelectListItem>, new 
+                        { 
+                            @class="form-control",
+                            @required = "true"
+                        })
+
+                    @if (ViewBag.MsjPantalla != null)
+                    {
+                        <br>
+                        <div class="alert alert-warning" role="alert" style="text-align:center">
+                            @ViewBag.MsjPantalla
+                        </div>
+                    }
+
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">Procesar</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+

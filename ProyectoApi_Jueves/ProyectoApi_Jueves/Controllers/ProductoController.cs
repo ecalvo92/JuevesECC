@@ -39,5 +39,56 @@ namespace ProyectoApi_Jueves.Controllers
                 return Ok(respuesta);
             }
         }
+
+        [Authorize]
+        [Route("ConsultarCategorias")]
+        [HttpGet]
+        public IActionResult ConsultarCategorias()
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                CategoriaRespuesta respuesta = new CategoriaRespuesta();
+
+                var result = db.Query<Categoria>("ConsultarCategorias",
+                    new { },
+                    commandType: CommandType.StoredProcedure).ToList();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "No hay categorías registradas.";
+                }
+                else
+                {
+                    respuesta.Datos = result;
+                }
+
+                return Ok(respuesta);
+            }
+        }        
+
+        [Authorize]
+        [Route("RegistrarProducto")]
+        [HttpPost]
+        public IActionResult RegistrarProducto(Producto entidad)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                Respuesta respuesta = new Respuesta();
+
+                var result = db.Execute("RegistrarProducto",
+                    new { entidad.NombreProducto, entidad.Inventario, entidad.IdCategoria },
+                    commandType: CommandType.StoredProcedure);
+
+                if (result <= 0)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Este producto ya se encuentra registrado.";
+                }
+
+                return Ok(respuesta);
+            }
+        }        
+
     }
 }

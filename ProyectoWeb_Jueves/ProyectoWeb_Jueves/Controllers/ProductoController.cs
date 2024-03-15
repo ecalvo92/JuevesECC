@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProyectoWeb_Jueves.Entidades;
 using ProyectoWeb_Jueves.Models;
 using ProyectoWeb_Jueves.Services;
@@ -22,5 +23,38 @@ namespace ProyectoWeb_Jueves.Controllers
                 return View(new List<Producto>());
             }
         }
+
+        [HttpGet]
+        public IActionResult AgregarProducto()
+        {
+            CargarCategorias();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AgregarProducto(Producto entidad)
+        {
+            var resp = _productoModel.RegistrarProducto(entidad);
+
+            if (resp?.Codigo == "00")
+                return RedirectToAction("ConsultarProductos", "Producto");
+            else
+            {
+                CargarCategorias();
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
+        }
+
+        private void CargarCategorias()
+        {
+            var lista = new List<SelectListItem> { new SelectListItem { Value = string.Empty, Text = "Seleccione..." } };
+
+            foreach (var item in _productoModel.ConsultarCategorias()?.Datos!)
+                lista.Add(new SelectListItem { Value = item.IdCategoria.ToString(), Text = item.NombreCategoria });
+
+            ViewBag.Categorias = lista;
+        }
+
     }
 }
