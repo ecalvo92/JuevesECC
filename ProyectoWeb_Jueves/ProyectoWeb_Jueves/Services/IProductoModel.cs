@@ -5,7 +5,8 @@ namespace ProyectoWeb_Jueves.Services
     public interface IProductoModel
     {
         ProductoRespuesta? ConsultarProductos();
-        Respuesta? RegistrarProducto(Producto entidad);
         CategoriaRespuesta? ConsultarCategorias();
+        Respuesta? RegistrarProducto(Producto entidad);
+        Respuesta? EliminarProducto(long IdProducto);
     }
 }

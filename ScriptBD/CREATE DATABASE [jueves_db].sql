@@ -63,12 +63,16 @@ INSERT [dbo].[tCategoria] ([IdCategoria], [Nombre], [CantidadMinima]) VALUES (3,
 GO
 INSERT [dbo].[tCategoria] ([IdCategoria], [Nombre], [CantidadMinima]) VALUES (4, N'Spaguetti', 15)
 GO
+INSERT [dbo].[tCategoria] ([IdCategoria], [Nombre], [CantidadMinima]) VALUES (5, N'Arroz con leche', 8)
+GO
 SET IDENTITY_INSERT [dbo].[tCategoria] OFF
 GO
 
 SET IDENTITY_INSERT [dbo].[tProducto] ON 
 GO
-INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (1, N'Pasta', 50, 4)
+INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (3, N'Camarones', 160, 3)
+GO
+INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (4, N'Cajas de leche', 50, 5)
 GO
 SET IDENTITY_INSERT [dbo].[tProducto] OFF
 GO
@@ -81,12 +85,12 @@ INSERT [dbo].[tRol] ([IdRol], [Nombre]) VALUES (2, N'Trabajador Administrativo')
 GO
 INSERT [dbo].[tRol] ([IdRol], [Nombre]) VALUES (3, N'Trabajador Operativo')
 GO
+
 SET IDENTITY_INSERT [dbo].[tRol] OFF
 GO
-
 SET IDENTITY_INSERT [dbo].[tUsuario] ON 
 GO
-INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado], [EsTemporal]) VALUES (5, N'msanchez00881@ufide.ac.cr', N'T0xLUmcdLgwAnRluCxHc6Q==', N'Mario Sánchez Monge', 1, 1, 0)
+INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado], [EsTemporal]) VALUES (5, N'msanchez00881@ufide.ac.cr', N'T0xLUmcdLgwAnRluCxHc6Q==', N'Mario Sánchez Monge', 2, 1, 0)
 GO
 SET IDENTITY_INSERT [dbo].[tUsuario] OFF
 GO
@@ -141,6 +145,16 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[ConsultarCategorias]
+AS
+BEGIN
+	
+	SELECT	IdCategoria, Nombre 'NombreCategoria'
+	FROM	tCategoria
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[ConsultarProductos]
 AS
 BEGIN
@@ -148,6 +162,17 @@ BEGIN
 	SELECT IdProducto,P.Nombre 'NombreProducto',Inventario,P.IdCategoria,C.Nombre 'NombreCategoria',CantidadMinima
 	FROM	tProducto P
 	INNER JOIN tCategoria C ON P.IdCategoria = C.IdCategoria
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[EliminarProducto]
+	@IdProducto BIGINT
+AS
+BEGIN
+
+	DELETE FROM tProducto
+	WHERE IdProducto = @IdProducto
 
 END
 GO
@@ -194,6 +219,24 @@ BEGIN
 	FROM	tUsuario U
 	INNER	JOIN tRol R ON U.IdRol = R.IdRol	
 	WHERE	Correo = @Correo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[RegistrarProducto]
+	@NombreProducto	VARCHAR(200),
+	@Inventario		INT,
+	@IdCategoria	BIGINT
+AS
+BEGIN
+
+	IF NOT EXISTS(SELECT 1 FROM tProducto WHERE Nombre = @NombreProducto)
+	BEGIN
+
+		INSERT INTO dbo.tProducto(Nombre,Inventario,IdCategoria)
+		VALUES (@NombreProducto,@Inventario,@IdCategoria)
+
+	END
 
 END
 GO

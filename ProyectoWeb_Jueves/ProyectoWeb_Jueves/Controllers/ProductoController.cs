@@ -46,6 +46,20 @@ namespace ProyectoWeb_Jueves.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult EliminarProducto(Producto entidad)
+        {
+            var resp = _productoModel.EliminarProducto(entidad.IdProducto);
+
+            if (resp?.Codigo == "00")
+                return RedirectToAction("ConsultarProductos", "Producto");
+            else
+            {
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
+        }
+
         private void CargarCategorias()
         {
             var lista = new List<SelectListItem> { new SelectListItem { Value = string.Empty, Text = "Seleccione..." } };

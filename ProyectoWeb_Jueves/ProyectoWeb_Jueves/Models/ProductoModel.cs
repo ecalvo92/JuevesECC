@@ -20,6 +20,18 @@ namespace ProyectoWeb_Jueves.Models
             return null;
         }
 
+        public CategoriaRespuesta? ConsultarCategorias()
+        {
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/ConsultarCategorias";
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _sesion.HttpContext?.Session.GetString("Token"));
+            var resp = _http.GetAsync(url).Result;
+
+            if (resp.IsSuccessStatusCode)
+                return resp.Content.ReadFromJsonAsync<CategoriaRespuesta>().Result;
+
+            return null;
+        }
+
         public Respuesta? RegistrarProducto(Producto entidad)
         {
             string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/RegistrarProducto";
@@ -33,14 +45,14 @@ namespace ProyectoWeb_Jueves.Models
             return null;
         }
 
-        public CategoriaRespuesta? ConsultarCategorias()
+        public Respuesta? EliminarProducto(long IdProducto)
         {
-            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/ConsultarCategorias";
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/EliminarProducto?IdProducto=" + IdProducto;
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _sesion.HttpContext?.Session.GetString("Token"));
-            var resp = _http.GetAsync(url).Result;
+            var resp = _http.DeleteAsync(url).Result;
 
             if (resp.IsSuccessStatusCode)
-                return resp.Content.ReadFromJsonAsync<CategoriaRespuesta>().Result;
+                return resp.Content.ReadFromJsonAsync<Respuesta>().Result;
 
             return null;
         }

@@ -88,6 +88,29 @@ namespace ProyectoApi_Jueves.Controllers
 
                 return Ok(respuesta);
             }
+        }
+
+        [Authorize]
+        [Route("EliminarProducto")]
+        [HttpDelete]
+        public IActionResult EliminarProducto(long IdProducto)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                Respuesta respuesta = new Respuesta();
+
+                var result = db.Execute("EliminarProducto",
+                    new { IdProducto },
+                    commandType: CommandType.StoredProcedure);
+
+                if (result <= 0)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Este producto no se pudo eliminar.";
+                }
+
+                return Ok(respuesta);
+            }
         }        
 
     }

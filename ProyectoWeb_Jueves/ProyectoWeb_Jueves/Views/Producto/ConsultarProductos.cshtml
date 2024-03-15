@@ -9,10 +9,19 @@
                 <div style="text-align:right">
                     <a class="btn btn-primary" href="@Url.Action("AgregarProducto", "Producto")"> + Agregar</a>
                 </div>
-            </div>           
+                <br>
+            </div>
+
+            @if (ViewBag.MsjPantalla != null)
+            {
+                <br>
+                <div class="alert alert-warning" role="alert" style="text-align:center">
+                    @ViewBag.MsjPantalla
+                </div>
+            }
 
             <div class="card-body table-responsive p-0">
-                <table class="table table-hover text-nowrap">
+                <table id="Info" class="table table-hover text-nowrap">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -20,6 +29,7 @@
                             <th>Inventario</th>
                             <th>Categoría</th>
                             <th>Cantidad Mínima</th>
+                            <th>Eliminar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,11 +41,62 @@
                                 <td>@item.Inventario</td>
                                 <td>@item.NombreCategoria</td>
                                 <td>@item.CantidadMinima</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary passingID" data-toggle="modal" data-target="#exampleModal"
+                                        data-id="@item.IdProducto" data-name="@item.NombreProducto">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                         }                       
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        var table = new DataTable('#Info', {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.0.2/i18n/es-ES.json',
+            },
+            "bInfo": false,
+            "bLengthChange": false,
+            columnDefs: [{ type: 'string', targets: [0,1,2,3,4] }]
+            });
+    });
+
+    $(".passingID").click(function () {
+        $("#IdProducto").val($(this).attr('data-id'));
+        $("#Question").text("¿Desea eliminar el producto " + $(this).attr('data-name') + "?");
+    });
+
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("EliminarProducto", "Producto", FormMethod.Post))
+            {
+                <div class="modal-body">
+                    <input type="hidden" id="IdProducto" name="IdProducto" value="">
+                    <p id="Question" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Procesar</button>
+                </div>
+            }
         </div>
     </div>
 </div>
