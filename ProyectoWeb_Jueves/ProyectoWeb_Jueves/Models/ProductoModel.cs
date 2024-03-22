@@ -20,6 +20,18 @@ namespace ProyectoWeb_Jueves.Models
             return null;
         }
 
+        public ProductoRespuesta? ConsultarProducto(long IdProducto)
+        {
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/ConsultarProducto?IdProducto=" + IdProducto;
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _sesion.HttpContext?.Session.GetString("Token"));
+            var resp = _http.GetAsync(url).Result;
+
+            if (resp.IsSuccessStatusCode)
+                return resp.Content.ReadFromJsonAsync<ProductoRespuesta>().Result;
+
+            return null;
+        }
+
         public CategoriaRespuesta? ConsultarCategorias()
         {
             string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/ConsultarCategorias";
@@ -38,6 +50,19 @@ namespace ProyectoWeb_Jueves.Models
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _sesion.HttpContext?.Session.GetString("Token"));
             JsonContent body = JsonContent.Create(entidad);
             var resp = _http.PostAsync(url, body).Result;
+
+            if (resp.IsSuccessStatusCode)
+                return resp.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+            return null;
+        }
+
+        public Respuesta? ActualizarProducto(Producto entidad)
+        {
+            string url = _configuration.GetSection("settings:UrlApi").Value + "api/Producto/ActualizarProducto";
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _sesion.HttpContext?.Session.GetString("Token"));
+            JsonContent body = JsonContent.Create(entidad);
+            var resp = _http.PutAsync(url, body).Result;
 
             if (resp.IsSuccessStatusCode)
                 return resp.Content.ReadFromJsonAsync<Respuesta>().Result;

@@ -60,6 +60,29 @@ namespace ProyectoWeb_Jueves.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ActualizarProducto(long id)
+        {
+            var resp = _productoModel.ConsultarProducto(id);
+            CargarCategorias();
+            return View(resp?.Dato);
+        }
+
+        [HttpPost]
+        public IActionResult ActualizarProducto(Producto entidad)
+        {
+            var resp = _productoModel.ActualizarProducto(entidad);
+
+            if (resp?.Codigo == "00")
+                return RedirectToAction("ConsultarProductos", "Producto");
+            else
+            {
+                CargarCategorias();
+                ViewBag.MsjPantalla = resp?.Mensaje;
+                return View();
+            }
+        }
+
         private void CargarCategorias()
         {
             var lista = new List<SelectListItem> { new SelectListItem { Value = string.Empty, Text = "Seleccione..." } };

@@ -12,10 +12,10 @@ namespace ProyectoApi_Jueves.Models
     {
         string SecretKey = _configuration.GetSection("settings:SecretKey").Value ?? string.Empty;
 
-        public string? GenerarToken(string Correo)
+        public string? GenerarToken(long IdUsuario)
         {
             List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim("username", Encrypt(Correo)));
+            claims.Add(new Claim(ClaimTypes.Name, Encrypt(IdUsuario.ToString())));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);

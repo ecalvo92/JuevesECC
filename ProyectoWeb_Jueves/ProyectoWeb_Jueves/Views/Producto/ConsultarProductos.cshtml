@@ -29,7 +29,7 @@
                             <th>Inventario</th>
                             <th>Categoría</th>
                             <th>Cantidad Mínima</th>
-                            <th>Eliminar</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,9 +42,13 @@
                                 <td>@item.NombreCategoria</td>
                                 <td>@item.CantidadMinima</td>
                                 <td>
+                                    <a class="btn btn-primary" href="@Url.Action("ActualizarProducto","Producto", new { id = item.IdProducto })">
+                                        <i class="fa fa-pencil-square-o faa-tada animated"></i>
+                                    </a>
+
                                     <button type="button" class="btn btn-primary passingID" data-toggle="modal" data-target="#exampleModal"
                                         data-id="@item.IdProducto" data-name="@item.NombreProducto">
-                                        <i class="fa fa-trash"></i>
+                                        <i class="fa fa-trash-o faa-pulse animated"></i>
                                     </button>
                                 </td>
                             </tr>

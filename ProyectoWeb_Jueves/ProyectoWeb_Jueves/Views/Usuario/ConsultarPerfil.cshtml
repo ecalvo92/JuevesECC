@@ -1,0 +1,72 @@
+﻿@model ProyectoWeb_Jueves.Entidades.Usuario
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+
+        <div class="card card-secondary" style="margin-top:2%">
+            <div class="card-header">
+                <h3 class="card-title">Mi Perfil</h3>
+            </div>
+
+            @using (Html.BeginForm("ActualizarPerfil", "Usuario", FormMethod.Post))
+            {
+                <div class="card-body">
+                    @Html.Label("Correo")
+                    @Html.TextBoxFor(x => x.Correo, new
+                        {
+                            @class = "form-control",
+                            @placeholder = "Correo",
+                            @required = "true"
+                        })
+                    <br>
+
+                    @Html.Label("Nombre")
+                    @Html.TextBoxFor(x => x.NombreUsuario, new
+                        {
+                            @class = "form-control",
+                            @placeholder = "Nombre",
+                            @required = "true"
+                        })
+                    <br>
+
+                    @Html.Label("Contraseña")
+                    @Html.TextBoxFor(x => x.Contrasenna, new
+                        {
+                            @type="Password",
+                            @class = "form-control",
+                            @placeholder = "Contraseña",
+                            @pattern = "^((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W]).{6,20})"
+                        })
+                    <br>
+
+                    @Html.Label("Rol")
+                    @Html.TextBoxFor(x => x.NombreRol, new
+                        {
+                            @class = "form-control",
+                            @placeholder = "Rol",
+                            @required = "true",
+                            @disabled = "true"
+                        })
+
+                    @if (ViewBag.MsjPantalla != null)
+                    {
+                        <br>
+                        <div class="alert alert-warning" role="alert" style="text-align:center">
+                            @ViewBag.MsjPantalla
+                        </div>
+                    }
+
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">Procesar</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+

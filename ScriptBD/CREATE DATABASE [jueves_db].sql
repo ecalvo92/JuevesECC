@@ -70,9 +70,7 @@ GO
 
 SET IDENTITY_INSERT [dbo].[tProducto] ON 
 GO
-INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (3, N'Camarones', 160, 3)
-GO
-INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (4, N'Cajas de leche', 50, 5)
+INSERT [dbo].[tProducto] ([IdProducto], [Nombre], [Inventario], [IdCategoria]) VALUES (3, N'Camarones Jumbo', 800, 5)
 GO
 SET IDENTITY_INSERT [dbo].[tProducto] OFF
 GO
@@ -85,12 +83,12 @@ INSERT [dbo].[tRol] ([IdRol], [Nombre]) VALUES (2, N'Trabajador Administrativo')
 GO
 INSERT [dbo].[tRol] ([IdRol], [Nombre]) VALUES (3, N'Trabajador Operativo')
 GO
-
 SET IDENTITY_INSERT [dbo].[tRol] OFF
 GO
+
 SET IDENTITY_INSERT [dbo].[tUsuario] ON 
 GO
-INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado], [EsTemporal]) VALUES (5, N'msanchez00881@ufide.ac.cr', N'T0xLUmcdLgwAnRluCxHc6Q==', N'Mario Sánchez Monge', 2, 1, 0)
+INSERT [dbo].[tUsuario] ([IdUsuario], [Correo], [Contrasenna], [Nombre], [IdRol], [Estado], [EsTemporal]) VALUES (5, N'msanchez@ufide.ac.cr', N'Vy81mKLSEOOpwDqPL8Q6lw==', N'Mario Sánchez', 2, 1, 0)
 GO
 SET IDENTITY_INSERT [dbo].[tUsuario] OFF
 GO
@@ -111,6 +109,41 @@ ALTER TABLE [dbo].[tUsuario]  WITH CHECK ADD  CONSTRAINT [FK_tUsuario_tRol] FORE
 REFERENCES [dbo].[tRol] ([IdRol])
 GO
 ALTER TABLE [dbo].[tUsuario] CHECK CONSTRAINT [FK_tUsuario_tRol]
+GO
+
+CREATE PROCEDURE [dbo].[ActualizarPerfil]
+	@IdUsuario		BIGINT,
+	@NombreUsuario	VARCHAR(200),
+	@Correo			VARCHAR(200),
+	@Contrasenna	VARCHAR(200),
+	@bActualizarClave BIT
+AS
+BEGIN
+
+	UPDATE dbo.tUsuario
+	   SET Correo = @Correo,
+		   Contrasenna = (CASE WHEN @bActualizarClave = 1 THEN @Contrasenna ELSE Contrasenna END),
+		   Nombre = @NombreUsuario
+	 WHERE IdUsuario = @IdUsuario
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ActualizarProducto]
+	@IdProducto		BIGINT,
+	@NombreProducto	VARCHAR(200),
+	@Inventario		INT,
+	@IdCategoria	BIGINT
+AS
+BEGIN
+
+	UPDATE	dbo.tProducto
+	SET		Nombre = @NombreProducto,
+			Inventario = @Inventario,
+			IdCategoria = @IdCategoria	
+	WHERE	IdProducto = @IdProducto
+
+END
 GO
 
 CREATE PROCEDURE [dbo].[CambiarContrasenna]
@@ -155,6 +188,19 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[ConsultarProducto]
+	@IdProducto BIGINT
+AS
+BEGIN
+	
+	SELECT IdProducto,P.Nombre 'NombreProducto',Inventario,P.IdCategoria,C.Nombre 'NombreCategoria',CantidadMinima
+	FROM	tProducto P
+	INNER JOIN tCategoria C ON P.IdCategoria = C.IdCategoria
+	WHERE IdProducto = @IdProducto
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[ConsultarProductos]
 AS
 BEGIN
@@ -162,6 +208,19 @@ BEGIN
 	SELECT IdProducto,P.Nombre 'NombreProducto',Inventario,P.IdCategoria,C.Nombre 'NombreCategoria',CantidadMinima
 	FROM	tProducto P
 	INNER JOIN tCategoria C ON P.IdCategoria = C.IdCategoria
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarUsuario]
+	@IdUsuario BIGINT
+AS
+BEGIN
+	
+	SELECT	IdUsuario,Correo,U.Nombre 'NombreUsuario',U.IdRol,R.Nombre 'NombreRol',Estado,EsTemporal
+	FROM	tUsuario U
+	INNER	JOIN tRol R ON U.IdRol = R.IdRol
+	WHERE	IdUsuario = @IdUsuario
 
 END
 GO

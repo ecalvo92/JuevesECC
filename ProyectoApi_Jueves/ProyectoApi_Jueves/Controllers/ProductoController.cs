@@ -41,6 +41,33 @@ namespace ProyectoApi_Jueves.Controllers
         }
 
         [Authorize]
+        [Route("ConsultarProducto")]
+        [HttpGet]
+        public IActionResult ConsultarProducto(long IdProducto)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                ProductoRespuesta respuesta = new ProductoRespuesta();
+
+                var result = db.Query<Producto>("ConsultarProducto",
+                    new { IdProducto },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "No hay productos registrados.";
+                }
+                else
+                {
+                    respuesta.Dato = result;
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [Authorize]
         [Route("ConsultarCategorias")]
         [HttpGet]
         public IActionResult ConsultarCategorias()
@@ -84,6 +111,29 @@ namespace ProyectoApi_Jueves.Controllers
                 {
                     respuesta.Codigo = "-1";
                     respuesta.Mensaje = "Este producto ya se encuentra registrado.";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [Authorize]
+        [Route("ActualizarProducto")]
+        [HttpPut]
+        public IActionResult ActualizarProducto(Producto entidad)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                Respuesta respuesta = new Respuesta();
+
+                var result = db.Execute("ActualizarProducto",
+                    new { entidad.IdProducto, entidad.NombreProducto, entidad.Inventario, entidad.IdCategoria },
+                    commandType: CommandType.StoredProcedure);
+
+                if (result <= 0)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Este producto no se pudo actualizar.";
                 }
 
                 return Ok(respuesta);

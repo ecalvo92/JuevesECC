@@ -34,7 +34,7 @@ namespace ProyectoApi_Jueves.Controllers
                 else
                 {
                     respuesta.Dato = result;
-                    respuesta.Dato.Token = _utilitariosModel.GenerarToken(result.Correo ?? string.Empty);
+                    respuesta.Dato.Token = _utilitariosModel.GenerarToken(result.IdUsuario);
                 }
 
                 return Ok(respuesta);
@@ -129,5 +129,57 @@ namespace ProyectoApi_Jueves.Controllers
             }
         }
 
+        [Authorize]
+        [Route("ConsultarUsuario")]
+        [HttpGet]
+        public IActionResult ConsultarUsuario()
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                UsuarioRespuesta respuesta = new UsuarioRespuesta();
+                long IdUsuario = long.Parse(_utilitariosModel.Decrypt(User.Identity!.Name!));
+
+                var result = db.Query<Usuario>("ConsultarUsuario",
+                    new { IdUsuario },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                if (result == null)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Este usuario no se encuentra registrado.";
+                }
+                else
+                {
+                    respuesta.Dato = result;
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [Authorize]
+        [Route("ActualizarPerfil")]
+        [HttpPut]
+        public IActionResult ActualizarPerfil(Usuario entidad)
+        {
+            using (var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                Respuesta respuesta = new Respuesta();
+                long IdUsuario = long.Parse(_utilitariosModel.Decrypt(User.Identity!.Name!));
+                bool bActualizarClave = (_utilitariosModel.Decrypt(entidad.Contrasenna!) != string.Empty);
+
+                var result = db.Execute("ActualizarPerfil",
+                    new { IdUsuario, entidad.NombreUsuario, entidad.Correo, entidad.Contrasenna, bActualizarClave },
+                    commandType: CommandType.StoredProcedure);
+
+                if (result <= 0)
+                {
+                    respuesta.Codigo = "-1";
+                    respuesta.Mensaje = "Este perfil no se pudo actualizar.";
+                }
+
+                return Ok(respuesta);
+            }
+        }
     }
 }
